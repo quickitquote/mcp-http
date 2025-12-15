@@ -6,6 +6,7 @@ A minimal HTTP-only search proxy to integrate with OpenAI Agent Builder without 
 
 - `GET /api/health` — simple health check
 - `GET /api/search?q=<query>` — proxies to `https://quickitquote.com/api/search?q=<query>` and returns normalized JSON
+- `GET/POST /api/mcp` — MCP server endpoint providing a tool `quickitquote_search` (input: `{ q: string }`) that calls `/api/search`
 
 ## Local run
 
@@ -21,6 +22,7 @@ npm run dev
 Create a `.env` (already provided) and set optional values:
 
 - `AUTH_TOKEN` (optional): if you want to secure access later. Not enforced yet.
+- `SEARCH_BASE_URL` (optional): override base URL used by MCP tool (default https://mcp-http.vercel.app)
 
 ## Deploy (Optional: Vercel)
 
@@ -30,6 +32,7 @@ When deployed on Vercel, the app exports the Express instance for serverless. Yo
 
 - `https://<your-vercel-domain>/api/health`
 - `https://<your-vercel-domain>/api/search?q=test`
+- `https://<your-vercel-domain>/api/mcp`
 
 ## GitHub
 
