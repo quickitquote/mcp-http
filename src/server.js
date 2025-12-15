@@ -1,9 +1,13 @@
+import cors from 'cors';
 import express from 'express';
 import fetch from 'node-fetch';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const IS_VERCEL = !!process.env.VERCEL;
+
+// Enable CORS for browser-based callers (Agent Builder UI, etc.)
+app.use(cors());
 
 // Simple health check
 app.get('/api/health', (_req, res) => {
