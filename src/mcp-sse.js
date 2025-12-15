@@ -26,12 +26,12 @@ const handler = async (req, res) => {
     // Simple GET: return tools list via SSE and keep connection open
     if (req.method === 'GET') {
         res.write(`data: ${JSON.stringify({ tools: [TOOL_DEF], resources: [] })}\n\n`);
-        
+
         // Keep connection alive with heartbeat
         const heartbeat = setInterval(() => {
             res.write(': heartbeat\n\n');
         }, 15000);
-        
+
         req.on('close', () => {
             clearInterval(heartbeat);
             res.end();
