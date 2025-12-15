@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 // Export the app for serverless platforms (Vercel)
-import mcpSSE from './mcp-sse.js';
+import mcpPlain from './mcp-plain.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -84,8 +84,8 @@ app.get('/api/search', async (req, res) => {
     }
 });
 
-// Minimal MCP endpoint (SSE)
-app.use('/api/mcp', mcpSSE);
+// Minimal MCP endpoint (Plain HTTP)
+app.use('/api/mcp', mcpPlain);
 
 if (!IS_VERCEL) {
     app.listen(PORT, () => {
