@@ -14,13 +14,24 @@ const TOOL_DEF = {
     },
 };
 
+const SERVER_INFO = {
+    name: 'quickitquote-mcp',
+    version: '1.0',
+};
+const PROTOCOL_VERSION = '2025-06-18';
+
 // Simple JSON-RPC 2.0 handler for MCP with a plain GET tools listing for Agent Builder
 const handler = async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
     // Many clients (including Agent Builder) probe with a simple GET expecting a plain list of tools
     if (req.method === 'GET') {
-        return res.json({ tools: [TOOL_DEF], resources: [] });
+        return res.json({
+            tools: [TOOL_DEF],
+            resources: [],
+            serverInfo: SERVER_INFO,
+            protocolVersion: PROTOCOL_VERSION,
+        });
     }
 
     let body = '';
@@ -32,7 +43,12 @@ const handler = async (req, res) => {
     try {
         if (!body || body.trim() === '') {
             // Empty request - return tool list directly in a simple shape
-            return res.json({ tools: [TOOL_DEF], resources: [] });
+            return res.json({
+                tools: [TOOL_DEF],
+                resources: [],
+                serverInfo: SERVER_INFO,
+                protocolVersion: PROTOCOL_VERSION,
+            });
         }
 
         const lines = body.split('\n').filter(l => l.trim());
@@ -46,9 +62,9 @@ const handler = async (req, res) => {
                         jsonrpc: '2.0',
                         id: frame.id || 1,
                         result: {
-                            protocolVersion: '2025-06-18',
+                            protocolVersion: PROTOCOL_VERSION,
                             capabilities: {},
-                            serverInfo: { name: 'quickitquote-mcp', version: '1.0' },
+                            serverInfo: SERVER_INFO,
                             tools: [TOOL_DEF],
                             resources: [],
                         },
