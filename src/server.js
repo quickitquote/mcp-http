@@ -61,7 +61,7 @@ if (!IS_VERCEL) {
 
 // Export the app for serverless platforms (Vercel)
 
-import mcpMinimal from './mcp-minimal.js';
+import mcpMinimal from './mcp-minimal-v2.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
