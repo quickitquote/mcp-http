@@ -29,8 +29,6 @@ const handler = async (req, res) => {
         return res.json({
             tools: [TOOL_DEF],
             resources: [],
-            serverInfo: SERVER_INFO,
-            protocolVersion: PROTOCOL_VERSION,
         });
     }
 
@@ -46,8 +44,6 @@ const handler = async (req, res) => {
             return res.json({
                 tools: [TOOL_DEF],
                 resources: [],
-                serverInfo: SERVER_INFO,
-                protocolVersion: PROTOCOL_VERSION,
             });
         }
 
