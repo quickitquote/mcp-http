@@ -1,7 +1,8 @@
 
-
+import cors from 'cors';
+import express from 'express';
+import fetch from 'node-fetch';
 // Export the app for serverless platforms (Vercel)
-
 import mcpMinimal from './mcp-minimal-v2.js';
 
 const app = express();
