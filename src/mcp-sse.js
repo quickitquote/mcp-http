@@ -21,11 +21,21 @@ const handler = async (req, res) => {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Access-Control-Allow-Origin', '*');
+    res.flushHeaders();
 
-    // Simple GET: return tools list via SSE
+    // Simple GET: return tools list via SSE and keep connection open
     if (req.method === 'GET') {
         res.write(`data: ${JSON.stringify({ tools: [TOOL_DEF], resources: [] })}\n\n`);
-        res.end();
+        
+        // Keep connection alive with heartbeat
+        const heartbeat = setInterval(() => {
+            res.write(': heartbeat\n\n');
+        }, 15000);
+        
+        req.on('close', () => {
+            clearInterval(heartbeat);
+            res.end();
+        });
         return;
     }
 
