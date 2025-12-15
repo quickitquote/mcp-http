@@ -20,9 +20,7 @@ const handler = async (req, res) => {
 
     // Many clients (including Agent Builder) probe with a simple GET expecting a plain list of tools
     if (req.method === 'GET') {
-        res.write(JSON.stringify({ tools: [TOOL_DEF], resources: [] }) + '\n');
-        res.end();
-        return;
+        return res.json({ tools: [TOOL_DEF], resources: [] });
     }
 
     let body = '';
@@ -34,9 +32,7 @@ const handler = async (req, res) => {
     try {
         if (!body || body.trim() === '') {
             // Empty request - return tool list directly in a simple shape
-            res.write(JSON.stringify({ tools: [TOOL_DEF], resources: [] }) + '\n');
-            res.end();
-            return;
+            return res.json({ tools: [TOOL_DEF], resources: [] });
         }
 
         const lines = body.split('\n').filter(l => l.trim());
@@ -46,7 +42,7 @@ const handler = async (req, res) => {
                 const frame = JSON.parse(line);
 
                 if (frame.method === 'initialize') {
-                    res.write(JSON.stringify({
+                    return res.json({
                         jsonrpc: '2.0',
                         id: frame.id || 1,
                         result: {
@@ -56,14 +52,14 @@ const handler = async (req, res) => {
                             tools: [TOOL_DEF],
                             resources: [],
                         },
-                    }) + '\n');
+                    });
                 }
                 else if (frame.method === 'tools/list' || frame.type === 'tools.list') {
-                    res.write(JSON.stringify({
+                    return res.json({
                         jsonrpc: '2.0',
                         id: frame.id || 1,
                         result: { tools: [TOOL_DEF], resources: [] },
-                    }) + '\n');
+                    });
                 }
                 else if (frame.method === 'tools/call' || frame.type === 'tools.invoke') {
                     const toolName = frame.params?.name || frame.tool;
@@ -71,27 +67,27 @@ const handler = async (req, res) => {
                     if (toolName === 'quickitquote_search') {
                         const q = frame.params?.arguments?.q || '';
                         if (!q) {
-                            res.write(JSON.stringify({
+                            return res.json({
                                 jsonrpc: '2.0',
                                 id: frame.id || 1,
                                 error: { code: -1, message: 'q parameter required' },
-                            }) + '\n');
+                            });
                         } else {
                             try {
                                 const url = `https://quickitquote.com/api/search?q=${encodeURIComponent(q)}`;
                                 const r = await fetch(url);
                                 const data = await r.json();
-                                res.write(JSON.stringify({
+                                return res.json({
                                     jsonrpc: '2.0',
                                     id: frame.id || 1,
                                     result: data,
-                                }) + '\n');
+                                });
                             } catch (err) {
-                                res.write(JSON.stringify({
+                                return res.json({
                                     jsonrpc: '2.0',
                                     id: frame.id || 1,
                                     error: { code: -1, message: err.message },
-                                }) + '\n');
+                                });
                             }
                         }
                     }
@@ -100,11 +96,11 @@ const handler = async (req, res) => {
                 // Ignore invalid JSON lines
             }
         }
-        res.end();
+        // Default fallback: list tools
+        return res.json({ jsonrpc: '2.0', result: { tools: [TOOL_DEF], resources: [] } });
     } catch (err) {
         res.statusCode = 500;
-        res.write(JSON.stringify({ error: err.message }));
-        res.end();
+        res.json({ error: err.message });
     }
 };
 
