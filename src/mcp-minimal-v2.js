@@ -14,9 +14,16 @@ const TOOL_DEF = {
     },
 };
 
-// Simple JSON-RPC 2.0 handler for MCP
+// Simple JSON-RPC 2.0 handler for MCP with a plain GET tools listing for Agent Builder
 const handler = async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
+
+    // Many clients (including Agent Builder) probe with a simple GET expecting { tools: [...] }
+    if (req.method === 'GET') {
+        res.write(JSON.stringify({ tools: [TOOL_DEF] }) + '\n');
+        res.end();
+        return;
+    }
 
     let body = '';
     await new Promise((resolve) => {
@@ -26,11 +33,8 @@ const handler = async (req, res) => {
 
     try {
         if (!body || body.trim() === '') {
-            // Empty request - return tool list directly
-            res.write(JSON.stringify({
-                jsonrpc: '2.0',
-                result: { tools: [TOOL_DEF] },
-            }) + '\n');
+            // Empty request - return tool list directly in a simple shape
+            res.write(JSON.stringify({ tools: [TOOL_DEF] }) + '\n');
             res.end();
             return;
         }
