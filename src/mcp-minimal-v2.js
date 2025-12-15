@@ -18,9 +18,9 @@ const TOOL_DEF = {
 const handler = async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
-    // Many clients (including Agent Builder) probe with a simple GET expecting { tools: [...] }
+    // Many clients (including Agent Builder) probe with a simple GET expecting a plain list of tools
     if (req.method === 'GET') {
-        res.write(JSON.stringify({ tools: [TOOL_DEF] }) + '\n');
+        res.write(JSON.stringify({ tools: [TOOL_DEF], resources: [] }) + '\n');
         res.end();
         return;
     }
@@ -34,7 +34,7 @@ const handler = async (req, res) => {
     try {
         if (!body || body.trim() === '') {
             // Empty request - return tool list directly in a simple shape
-            res.write(JSON.stringify({ tools: [TOOL_DEF] }) + '\n');
+            res.write(JSON.stringify({ tools: [TOOL_DEF], resources: [] }) + '\n');
             res.end();
             return;
         }
@@ -45,11 +45,24 @@ const handler = async (req, res) => {
             try {
                 const frame = JSON.parse(line);
 
-                if (frame.method === 'tools/list' || frame.type === 'tools.list') {
+                if (frame.method === 'initialize') {
                     res.write(JSON.stringify({
                         jsonrpc: '2.0',
                         id: frame.id || 1,
-                        result: { tools: [TOOL_DEF] },
+                        result: {
+                            protocolVersion: '2025-06-18',
+                            capabilities: {},
+                            serverInfo: { name: 'quickitquote-mcp', version: '1.0' },
+                            tools: [TOOL_DEF],
+                            resources: [],
+                        },
+                    }) + '\n');
+                }
+                else if (frame.method === 'tools/list' || frame.type === 'tools.list') {
+                    res.write(JSON.stringify({
+                        jsonrpc: '2.0',
+                        id: frame.id || 1,
+                        result: { tools: [TOOL_DEF], resources: [] },
                     }) + '\n');
                 }
                 else if (frame.method === 'tools/call' || frame.type === 'tools.invoke') {
