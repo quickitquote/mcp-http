@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const IS_VERCEL = !!process.env.VERCEL;
 
 // Simple health check
 app.get('/api/health', (_req, res) => {
@@ -47,6 +48,12 @@ app.get('/api/search', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`mcp-http server running on http://localhost:${PORT}`);
-});
+// Only start a listener in local/dev. On Vercel serverless, the platform handles the request lifecycle.
+if (!IS_VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`mcp-http server running on http://localhost:${PORT}`);
+    });
+}
+
+// Export the app for serverless platforms (Vercel)
+export default app;

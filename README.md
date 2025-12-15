@@ -26,6 +26,11 @@ Create a `.env` (already provided) and set optional values:
 
 You can deploy this project to Vercel. Provide Authorization metadata if needed to integrate with Agent Builder or OAuth later.
 
+When deployed on Vercel, the app exports the Express instance for serverless. Your production endpoints will look like:
+
+- `https://<your-vercel-domain>/api/health`
+- `https://<your-vercel-domain>/api/search?q=test`
+
 ## GitHub
 
 Please create a GitHub repository named `mcp-http` and share the remote URL so we can push from this workspace.
