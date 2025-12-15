@@ -1,0 +1,31 @@
+# mcp-http
+
+A minimal HTTP-only search proxy to integrate with OpenAI Agent Builder without MCP. It forwards queries to QuickItQuote and returns normalized JSON.
+
+## Endpoints
+
+- `GET /api/health` — simple health check
+- `GET /api/search?q=<query>` — proxies to `https://quickitquote.com/api/search?q=<query>` and returns normalized JSON
+
+## Local run
+
+```bash
+# Node 18+
+npm install
+npm run dev
+# Open http://localhost:3000/api/search?q=test
+```
+
+## Environment
+
+Create a `.env` (already provided) and set optional values:
+
+- `AUTH_TOKEN` (optional): if you want to secure access later. Not enforced yet.
+
+## Deploy (Optional: Vercel)
+
+You can deploy this project to Vercel. Provide Authorization metadata if needed to integrate with Agent Builder or OAuth later.
+
+## GitHub
+
+Please create a GitHub repository named `mcp-http` and share the remote URL so we can push from this workspace.
